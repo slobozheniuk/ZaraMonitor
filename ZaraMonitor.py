@@ -1,30 +1,32 @@
-import requests
-from bs4 import BeautifulSoup
+import subprocess
 
 class ZaraMonitor():
-    #Appear as browser
-    headers = {"User-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36"}
-
     def __init__(self, url):
         self.is_found = False
         self.monitor_url = url
-        self.soup = BeautifulSoup(requests.get(self.monitor_url, headers=self.headers).text, 'html.parser')
-        try:
-            self.get_title()
-        except:
-            raise Exception    
 
-    def get_title(self):
-        return self.soup.title.string
+    def run_playwright_test(self, test_name):
+    # Construct the command to run the Playwright test
+        command = f'npx playwright test {test_name} --headed'
+
+        try:
+        # Run the command and capture the output
+            result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+
+        # Check the result and return True if the test passed, False otherwise
+            if result.returncode == 0:
+               return True
+            else:
+                return False
+
+        except subprocess.CalledProcessError as e:
+            return False  
+    
 
     def check(self):
-        print('Checking {}'.format(self.get_title()))
-        try:
-            not_found = self.soup.find_all('span', {'class': 'button__second-line'})[0].string
-        except:
-            self.is_found = True
-            return True
+        print('Checking {}'.format(self.monitor_url))
+        return self.run_playwright_test(self.monitor_url)
 
-
+    
 
 
