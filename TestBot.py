@@ -1,6 +1,5 @@
 import asyncio
 import sys
-import collections
 from datetime import timedelta
 import logging
 import time
@@ -48,8 +47,18 @@ async def check(update: Update, context: CallbackContext):
     await send_message(chat_id = update.effective_chat.id, text='Out of stock' if out_of_stock else 'In stock')
 
 async def add(update: Update, context: CallbackContext):
-    url = update.message.text.removeprefix('/add ')
     chat_id = update.effective_chat.id
+    if (update.message.text == '/add all'):
+        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=313677662')
+        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=310627495')
+        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=310627494')
+        await adding(chat_id, 'https://www.zara.com/nl/en/share/-p03092201.html?v1=289036175')
+        await adding(chat_id, 'https://www.zara.com/nl/en/share/-p09598137.html?v1=321457445')
+    else:
+        url = update.message.text.removeprefix('/add ')
+        await adding(chat_id, url)
+
+async def adding(chat_id, url):
     add_chat_url(chat_id, url)
     logging.info('Added {} for {}'.format(url, chat_id))
     try:
@@ -82,7 +91,7 @@ async def is_out_of_stock(url):
         # Close the browser
         await browser.close()
         return is_out_of_stock
-    
+        
 async def get_title(url):
     async with async_playwright() as p:
         # Create a browser instance
@@ -99,7 +108,7 @@ async def get_title(url):
         await browser.close()
         return title    
     
-@tl.job(interval=timedelta(seconds=15))
+@tl.job(interval=timedelta(seconds=5))
 def run():
     asyncio.run(check_async())
 
@@ -108,7 +117,7 @@ async def check_async():
     toDelete = []
     for chat_id, url in chat_urls:
         logging.info('Checking {} for {}'.format(url, chat_id))
-        out_of_stock = await is_out_of_stock(url)
+        out_of_stock = await is_out_of_stock(url)    
         logging.info('{} is {}'.format(url, 'out of stock...' if out_of_stock else 'IN STOCK!!'))
         if not out_of_stock:
             try:
