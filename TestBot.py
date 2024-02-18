@@ -66,6 +66,16 @@ async def adding(chat_id, url):
     except:
         await update.message.reply_text(text='Something is wrong, try again later')
 
+async def is_out_of_stock_size(page):
+    # Get the title of the page
+    # Select the element with the specified class name
+    element = await page.locator('#product-size-selector-317760429-item-3').get_attribute('data-qa-action');
+    logging.info('Sweater 152 is ' + element)
+    if element == 'size-out-of-stock':
+        return True
+    else:
+        return False
+
 async def is_out_of_stock(url):
     async with async_playwright() as p:
         # Create a browser instance
@@ -76,6 +86,10 @@ async def is_out_of_stock(url):
         page = await context.new_page()
         # Navigate to the URL
         await page.goto(url)
+        if 'v1=317760429' in url:
+            is_out_of_stock = await is_out_of_stock_size(page)
+            await browser.close()
+            return is_out_of_stock
         # Get the title of the page
         # Select the element with the specified class name
         element = await page.query_selector('.product-detail-info__buttons')
