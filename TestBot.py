@@ -49,11 +49,7 @@ async def check(update: Update, context: CallbackContext):
 async def add(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     if (update.message.text == '/add all'):
-        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=313677662')
-        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=310627495')
-        await adding(chat_id, 'https://www.zara.com/nl/en/cashmere-scarf-p03887202.html?v1=310627494')
-        await adding(chat_id, 'https://www.zara.com/nl/en/share/-p03092201.html?v1=289036175')
-        await adding(chat_id, 'https://www.zara.com/nl/en/share/-p09598137.html?v1=321457445')
+        await adding(chat_id, 'https://www.zara.com/nl/en/z1975-mom-fit-high-waist-jeans-p04083022.html?v1=311297241')
     else:
         url = update.message.text.removeprefix('/add ')
         await adding(chat_id, url)
